@@ -1,3 +1,3 @@
-module github.com/enjoy/china-division-query
+module github.com/enjoy322/china-division-query
 
 go 1.18
