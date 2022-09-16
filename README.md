@@ -15,6 +15,8 @@
 go get -u github.com/enjoy/china-division-query
 ```
 
+> 需要将行政区文件拷贝到你的项目启动根目录下
+> 
 ```go
 package main
 
