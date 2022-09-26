@@ -11,10 +11,10 @@ var ProvinceList []Division
 var CityList []Division
 var CountyList []Division
 
-func InitData() {
-	ProvinceList = readCSV("./province.csv")
-	CityList = readCSV("./city.csv")
-	CountyList = readCSV("./county.csv")
+func InitData(dir string) {
+	ProvinceList = readCSV(dir + "/province.csv")
+	CityList = readCSV(dir + "/city.csv")
+	CountyList = readCSV(dir + "/county.csv")
 }
 
 func readCSV(fileName string) []Division {

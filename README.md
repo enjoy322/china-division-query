@@ -12,10 +12,10 @@
 #### 使用
 
 ```shell
-go get -u github.com/enjoy/china-division-query
+go get -u github.com/enjoy/china-division-query@master
 ```
 
-> 需要将行政区文件拷贝到你的项目启动根目录下
+> 需要将行政区文件拷贝到你的项目启动根目录下,然后启动时指定文件目录
 > 
 ```go
 package main
@@ -27,7 +27,7 @@ import (
 
 func main() {
 	// 初始化数据
-	division.InitData()
+	division.InitData("./files/")
 
 	// 样例 
 	list := division.ListProvince()

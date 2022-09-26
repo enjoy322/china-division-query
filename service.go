@@ -102,6 +102,9 @@ func ListNextByProvince(code string) []Division {
 
 // ListNextByCity list next level divisions by city code
 func ListNextByCity(code string) []Division {
+	if len(code) != 4 {
+		return nil
+	}
 	var list []Division
 	for _, item := range CountyList {
 		if item.CityCode == code {
