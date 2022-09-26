@@ -1,9 +1,9 @@
 package division
 
 type Division struct {
-	ProvinceCode string `json:"province_code"`
-	CityCode     string `json:"city_code"`
-	CountyCode   string `json:"county_code"`
-	TownCode     string `json:"town_code"`
+	ProvinceCode int    `json:"province_code"`
+	CityCode     int    `json:"city_code"`
+	CountyCode   int    `json:"county_code"`
+	TownCode     int    `json:"town_code"`
 	Name         string `json:"name"`
 }

@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"strconv"
 )
 
 var ProvinceList []Division
@@ -38,12 +39,23 @@ func readCSV(fileName string) []Division {
 			break
 		}
 		list = append(list, Division{
-			ProvinceCode: row[0],
-			CityCode:     row[1],
-			CountyCode:   row[2],
-			TownCode:     row[3],
+			ProvinceCode: backInt(row[0]),
+			CityCode:     backInt(row[1]),
+			CountyCode:   backInt(row[2]),
+			TownCode:     backInt(row[3]),
 			Name:         row[4],
 		})
 	}
 	return list
+}
+
+func backInt(codeStr string) int {
+	if len(codeStr) == 0 {
+		return 0
+	}
+	i, err := strconv.Atoi(codeStr)
+	if err != nil {
+		log.Fatalln("[error] 数据有误. ", err)
+	}
+	return i
 }

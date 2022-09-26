@@ -1,6 +1,8 @@
 package division
 
-import "errors"
+import (
+	"errors"
+)
 
 // ListProvince liat all provinces
 func ListProvince() []Division {
@@ -17,8 +19,8 @@ func ListCounty() []Division {
 	return CountyList
 }
 
-// GetProvince get province information
-func GetProvince(code string) (*Division, error) {
+//GetProvince get province information
+func GetProvince(code int) (*Division, error) {
 	for _, division := range ListProvince() {
 		if code == division.ProvinceCode {
 			return &division, nil
@@ -28,7 +30,7 @@ func GetProvince(code string) (*Division, error) {
 }
 
 // GetCity get city information
-func GetCity(code string) (*Division, error) {
+func GetCity(code int) (*Division, error) {
 	for _, division := range ListCity() {
 		if code == division.CityCode {
 			return &division, nil
@@ -38,7 +40,7 @@ func GetCity(code string) (*Division, error) {
 }
 
 // GetCounty get county information
-func GetCounty(code string) (*Division, error) {
+func GetCounty(code int) (*Division, error) {
 	for _, division := range ListCounty() {
 		if code == division.CountyCode {
 			return &division, nil
@@ -47,10 +49,19 @@ func GetCounty(code string) (*Division, error) {
 	return nil, errors.New("county code error")
 }
 
+func numType(code int) int {
+	i := 1
+	for code > 9 {
+		code = code / 10
+		i++
+	}
+	return i
+}
+
 // GetDivisionDetail province-city-county,if the length of slice returned is 1
 // it means code is of province
-func GetDivisionDetail(code string) ([]Division, error) {
-	switch len(code) {
+func GetDivisionDetail(code int) ([]Division, error) {
+	switch numType(code) {
 	case 2:
 		division, err := GetProvince(code)
 		if err != nil {
@@ -73,13 +84,13 @@ func GetDivisionDetail(code string) ([]Division, error) {
 		city, _ := GetCity(division.CityCode)
 		return []Division{*province, *city, *division}, nil
 	default:
-		return nil, errors.New("code error")
+		return nil, errors.New("[error] param: code error")
 	}
 }
 
 // ListNextDivision list the next level divisions
-func ListNextDivision(code string) ([]Division, error) {
-	switch len(code) {
+func ListNextDivision(code int) ([]Division, error) {
+	switch numType(code) {
 	case 2:
 		return ListNextByProvince(code), nil
 	case 4:
@@ -90,7 +101,7 @@ func ListNextDivision(code string) ([]Division, error) {
 }
 
 // ListNextByProvince list next level divisions by province code
-func ListNextByProvince(code string) []Division {
+func ListNextByProvince(code int) []Division {
 	var list []Division
 	for _, item := range CityList {
 		if item.ProvinceCode == code {
@@ -101,8 +112,8 @@ func ListNextByProvince(code string) []Division {
 }
 
 // ListNextByCity list next level divisions by city code
-func ListNextByCity(code string) []Division {
-	if len(code) != 4 {
+func ListNextByCity(code int) []Division {
+	if numType(code) != 4 {
 		return nil
 	}
 	var list []Division
