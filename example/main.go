@@ -1,10 +1,5 @@
 package main
 
-import (
-	"fmt"
-	division "github.com/enjoy322/china-division-query"
-)
-
 func main() {
 	// 1.
 	//client, err := RedisInit(Redis{
@@ -22,12 +17,12 @@ func main() {
 	//fmt.Println(province)
 
 	// 2.
-	divisionClient := division.InitDivisionWithOutRedisAdapter("divisions")
-
-	province, err := divisionClient.ListNextDivision(530102)
-	if err != nil {
-		fmt.Println(err)
-	}
-	fmt.Println(province)
+	//divisionClient := division.InitDivisionWithOutRedisAdapter("divisions")
+	//
+	//province, err := divisionClient.ListNextDivision(530102)
+	//if err != nil {
+	//	fmt.Println(err)
+	//}
+	//fmt.Println(province)
 	// [{53 5301 530102 530102001 华山街道} {53 5301 530102 530102002 护国街道} ...
 }

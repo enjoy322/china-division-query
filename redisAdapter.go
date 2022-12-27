@@ -18,10 +18,10 @@ var towns map[int][]Division
 var dir string
 
 // cache
-var cacheProvinceKey = "province"
-var cacheCityKey = "city:"
-var cacheCountyKey = "county:"
-var cacheTownKey = "town:"
+var cacheProvinceKey = "division_province"
+var cacheCityKey = "division_city:"
+var cacheCountyKey = "division_county:"
+var cacheTownKey = "division_town:"
 
 type RedisAdapter struct {
 	rdb *redis.Client
@@ -68,7 +68,7 @@ func initTown(list []Division, rdb *redis.Client) error {
 	pip := rdb.Pipeline()
 	ctx := context.Background()
 	for _, v := range list {
-		pip.ZAdd(ctx, "town:"+strconv.Itoa(v.CountyCode), &redis.Z{Score: float64(v.TownCode), Member: v.Name})
+		pip.ZAdd(ctx, cacheTownKey+strconv.Itoa(v.CountyCode), &redis.Z{Score: float64(v.TownCode), Member: v.Name})
 	}
 	_, err := pip.Exec(ctx)
 	return err
@@ -78,7 +78,7 @@ func initCounty(list []Division, rdb *redis.Client) error {
 	pip := rdb.Pipeline()
 	ctx := context.Background()
 	for _, v := range list {
-		pip.ZAdd(ctx, "county:"+strconv.Itoa(v.CityCode), &redis.Z{Score: float64(v.CountyCode), Member: v.Name})
+		pip.ZAdd(ctx, cacheCountyKey+strconv.Itoa(v.CityCode), &redis.Z{Score: float64(v.CountyCode), Member: v.Name})
 	}
 	_, err := pip.Exec(ctx)
 	return err
@@ -88,7 +88,7 @@ func initCity(list []Division, rdb *redis.Client) error {
 	pip := rdb.Pipeline()
 	ctx := context.Background()
 	for _, v := range list {
-		pip.ZAdd(ctx, "city:"+strconv.Itoa(v.ProvinceCode), &redis.Z{Score: float64(v.CityCode), Member: v.Name})
+		pip.ZAdd(ctx, cacheCityKey+strconv.Itoa(v.ProvinceCode), &redis.Z{Score: float64(v.CityCode), Member: v.Name})
 	}
 	_, err := pip.Exec(ctx)
 	return err
