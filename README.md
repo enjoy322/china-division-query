@@ -15,7 +15,7 @@
 #### 使用
 
 ```shell
-go get -u github.com/enjoy/china-division-query@master
+go get -u github.com/enjoy322/china-division-query@master
 ```
 
 若需使用redis缓存,需使用以下库
@@ -32,7 +32,7 @@ package main
 
 import (
 	"fmt"
-	division "github.com/enjoy/china-division-query"
+	division "github.com/enjoy322/china-division-query"
 )
 
 func main() {
