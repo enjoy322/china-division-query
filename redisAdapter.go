@@ -27,40 +27,49 @@ type RedisAdapter struct {
 	rdb *redis.Client
 }
 
-func InitDivisionWithRedisAdapter(fileDir string, db *redis.Client) *RedisAdapter {
+func InitDivisionWithRedisAdapter(fileDir string, db *redis.Client, level int) *RedisAdapter {
 	if db == nil {
 		log.Fatalln("redis client is invalid")
 	}
 	dir = fileDir
-	initWithRedis(db)
+	initWithRedis(db, level)
 	return &RedisAdapter{
 		rdb: db,
 	}
 }
 
-func initWithRedis(rdb *redis.Client) {
+func initWithRedis(rdb *redis.Client, level int) {
 	log.Println("-------读取division------")
 	start := time.Now()
-
-	err := initProvince(readProvince(), rdb)
-	if err != nil {
-		return
+	if level < 1 || level > 5 {
+		log.Fatalln("level必须大于1且小于5")
+	}
+	if level == 1 {
+		err := initProvince(readProvince(), rdb)
+		if err != nil {
+			return
+		}
 	}
 
-	err = initCity(readCity(), rdb)
-	if err != nil {
-		return
+	if level == 2 {
+		err := initCity(readCity(), rdb)
+		if err != nil {
+			return
+		}
+	}
+	if level == 3 {
+		err := initCounty(readCounty(), rdb)
+		if err != nil {
+			return
+		}
+	}
+	if level == 4 {
+		err := initTown(readTown(), rdb)
+		if err != nil {
+			return
+		}
 	}
 
-	err = initCounty(readCounty(), rdb)
-	if err != nil {
-		return
-	}
-
-	err = initTown(readTown(), rdb)
-	if err != nil {
-		return
-	}
 	log.Println("---------division 写入redis完成：", time.Now().Sub(start).Seconds(), "------------")
 }
 
