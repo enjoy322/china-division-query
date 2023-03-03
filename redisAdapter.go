@@ -44,26 +44,26 @@ func initWithRedis(rdb *redis.Client, level int) {
 	if level < 1 || level > 5 {
 		log.Fatalln("level必须大于1且小于5")
 	}
-	if level == 1 {
+	if level > 0 {
 		err := initProvince(readProvince(), rdb)
 		if err != nil {
 			return
 		}
 	}
 
-	if level == 2 {
+	if level > 1 {
 		err := initCity(readCity(), rdb)
 		if err != nil {
 			return
 		}
 	}
-	if level == 3 {
+	if level > 2 {
 		err := initCounty(readCounty(), rdb)
 		if err != nil {
 			return
 		}
 	}
-	if level == 4 {
+	if level > 3 {
 		err := initTown(readTown(), rdb)
 		if err != nil {
 			return

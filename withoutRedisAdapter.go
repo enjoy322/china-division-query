@@ -23,17 +23,17 @@ func initDivision(level int) {
 
 	towns = make(map[int][]Division)
 
-	if level == 2 {
+	if level > 1 {
 		for _, v := range readCity() {
 			cities[v.ProvinceCode] = append(cities[v.ProvinceCode], v)
 		}
 	}
-	if level == 3 {
+	if level > 2 {
 		for _, v := range readCounty() {
 			counties[v.CityCode] = append(counties[v.CityCode], v)
 		}
 	}
-	if level == 4 {
+	if level > 3 {
 		for _, v := range readTown() {
 			towns[v.CountyCode] = append(towns[v.CountyCode], v)
 		}
