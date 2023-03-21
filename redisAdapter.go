@@ -27,44 +27,44 @@ type RedisAdapter struct {
 	rdb *redis.Client
 }
 
-func InitDivisionWithRedisAdapter(fileDir string, db *redis.Client, level int) *RedisAdapter {
+func InitDivisionWithRedisAdapter(fileDir string, db *redis.Client, level int, limitProvince map[int]struct{}) *RedisAdapter {
 	if db == nil {
 		log.Fatalln("redis client is invalid")
 	}
 	dir = fileDir
-	initWithRedis(db, level)
+	initWithRedis(db, level, limitProvince)
 	return &RedisAdapter{
 		rdb: db,
 	}
 }
 
-func initWithRedis(rdb *redis.Client, level int) {
+func initWithRedis(rdb *redis.Client, level int, limitProvince map[int]struct{}) {
 	log.Println("-------读取division------")
 	start := time.Now()
 	if level < 1 || level > 5 {
 		log.Fatalln("level必须大于1且小于5")
 	}
 	if level > 0 {
-		err := initProvince(readProvince(), rdb)
+		err := initProvince(readProvince(), rdb, limitProvince)
 		if err != nil {
 			return
 		}
 	}
 
 	if level > 1 {
-		err := initCity(readCity(), rdb)
+		err := initCity(readCity(), rdb, limitProvince)
 		if err != nil {
 			return
 		}
 	}
 	if level > 2 {
-		err := initCounty(readCounty(), rdb)
+		err := initCounty(readCounty(), rdb, limitProvince)
 		if err != nil {
 			return
 		}
 	}
 	if level > 3 {
-		err := initTown(readTown(), rdb)
+		err := initTown(readTown(), rdb, limitProvince)
 		if err != nil {
 			return
 		}
@@ -73,41 +73,49 @@ func initWithRedis(rdb *redis.Client, level int) {
 	log.Println("---------division 写入redis完成：", time.Now().Sub(start).Seconds(), "------------")
 }
 
-func initTown(list []Division, rdb *redis.Client) error {
+func initTown(list []Division, rdb *redis.Client, limitProvince map[int]struct{}) error {
 	pip := rdb.Pipeline()
 	ctx := context.Background()
 	for _, v := range list {
-		pip.ZAdd(ctx, cacheTownKey+strconv.Itoa(v.CountyCode), &redis.Z{Score: float64(v.TownCode), Member: v.Name})
+		if _, ok := limitProvince[v.ProvinceCode]; ok {
+			pip.ZAdd(ctx, cacheTownKey+strconv.Itoa(v.CountyCode), &redis.Z{Score: float64(v.TownCode), Member: v.Name})
+		}
 	}
 	_, err := pip.Exec(ctx)
 	return err
 }
 
-func initCounty(list []Division, rdb *redis.Client) error {
+func initCounty(list []Division, rdb *redis.Client, limitProvince map[int]struct{}) error {
 	pip := rdb.Pipeline()
 	ctx := context.Background()
 	for _, v := range list {
-		pip.ZAdd(ctx, cacheCountyKey+strconv.Itoa(v.CityCode), &redis.Z{Score: float64(v.CountyCode), Member: v.Name})
+		if _, ok := limitProvince[v.ProvinceCode]; ok {
+			pip.ZAdd(ctx, cacheCountyKey+strconv.Itoa(v.CityCode), &redis.Z{Score: float64(v.CountyCode), Member: v.Name})
+		}
 	}
 	_, err := pip.Exec(ctx)
 	return err
 }
 
-func initCity(list []Division, rdb *redis.Client) error {
+func initCity(list []Division, rdb *redis.Client, limitProvince map[int]struct{}) error {
 	pip := rdb.Pipeline()
 	ctx := context.Background()
 	for _, v := range list {
-		pip.ZAdd(ctx, cacheCityKey+strconv.Itoa(v.ProvinceCode), &redis.Z{Score: float64(v.CityCode), Member: v.Name})
+		if _, ok := limitProvince[v.ProvinceCode]; ok {
+			pip.ZAdd(ctx, cacheCityKey+strconv.Itoa(v.ProvinceCode), &redis.Z{Score: float64(v.CityCode), Member: v.Name})
+		}
 	}
 	_, err := pip.Exec(ctx)
 	return err
 }
 
-func initProvince(list []Division, rdb *redis.Client) error {
+func initProvince(list []Division, rdb *redis.Client, limitProvince map[int]struct{}) error {
 	pip := rdb.Pipeline()
 	ctx := context.Background()
 	for _, v := range list {
-		pip.ZAdd(ctx, cacheProvinceKey, &redis.Z{Score: float64(v.ProvinceCode), Member: v.Name})
+		if _, ok := limitProvince[v.ProvinceCode]; ok {
+			pip.ZAdd(ctx, cacheProvinceKey, &redis.Z{Score: float64(v.ProvinceCode), Member: v.Name})
+		}
 	}
 	_, err := pip.Exec(ctx)
 	return err
